@@ -1,0 +1,11 @@
+__pycache__
+.pytest_cache
+
+*.egg-info
+*.lprof
+*.prof
+*.tar.gz
+*.tgz
+*.txz
+*.swp
+*.csv
