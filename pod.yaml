@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rest-api
+  labels:
+    demo: rest-api
+spec:
+  containers:
+    - name: flask-ssl-nginx
+      image: flask_ssl_nginx:latest
+      ports:
+        - containerPort: 80
+      volumeMounts:
+        - mountPath: /mnt/socket
+          name: share-socket
+      imagePullPolicy: Never
+    - name: flask-uwsgi
+      image: flask_uwsgi:latest
+      command:
+        - "sh"
+        - "-c"
+      args:
+        - "uwsgi --ini uwsgi.ini"
+      volumeMounts:
+        - mountPath: /mnt/socket
+          name: share-socket
+      imagePullPolicy: Never
+  volumes:
+    - name: share-socket
+      emptyDir:
+        medium: Memory
