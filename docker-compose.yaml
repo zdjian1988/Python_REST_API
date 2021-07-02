@@ -1,0 +1,40 @@
+version: "3.3"
+services:
+    flask_ssl_nginx:
+        build:
+            context: ./docker_image/flask_ssl_nginx
+        image: flask_ssl_nginx:latest
+        container_name: flask_ssl_nginx
+    flask_uwsgi:
+        build:
+            context: ./docker_image/flask_uwsgi
+        image: flask_uwsgi:latest
+        container_name: flask_uwsgi
+        volumes:
+            - type: volume
+              source: share_socket
+              target: /mnt/socket
+        command:
+            - "uwsgi"
+            - "--ini"
+            - "uwsgi.ini"
+    rest_api:
+        build:
+            context: ./docker_image/flask_ssl_nginx
+        image: flask_ssl_nginx:latest
+        container_name: flask_ssl_nginx
+        ports:
+            - "9487:80"
+        volumes:
+            - type: volume
+              source: share_socket
+              target: /mnt/socket
+        depends_on:
+            - flask_uwsgi
+volumes:
+    share_socket:
+        driver: local
+        driver_opts:
+            o: bind
+            type: none
+            device: /mnt/socket
